@@ -59,23 +59,23 @@ show_logs() {
     docker logs ergogen-app-container
 }
 
-# Print blinking ascii art text from ./ascii-art.txt
-print_blinking_text() {
+# Prints text from 'ascii-art.txt' in purple color
+print_purple_text_banner() {
     while IFS= read -r line; do
-        echo -e "\e[5m$line\e[0m"
-        sleep 0.1
+        echo -e "\e[35m$line\e[0m"
     done < ascii-art.txt
 }
 
 # Main function
 main() {
+    print_purple_text_banner;
     while true; do
         show_options
         read -p "Enter option: " option
         case $option in
             1) rebuild_image;;
             #Once the container is successfully running, print blinking ascii art text
-            2) run_container && print_blinking_text;;
+            2) run_container;;
             3) start_container;;
             4) stop_container;;
             5) remove_container;;
