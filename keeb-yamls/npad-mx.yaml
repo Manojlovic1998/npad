@@ -1,0 +1,137 @@
+units:
+  # Proxy Spacing Variables
+  kx: u
+  ky: u
+  # Padding Variables
+  px: kx + 4
+  py: ky + 4
+points:
+  zones:
+    matrix:
+      key: # Global key definition to our matrix zone
+        padding: 1ky # defines the vertical space between each key
+        spread: 1ky #  defines the horizontal space between each key.
+      columns:
+        left:
+          rows:
+            panel: # For which row name to use
+              skip: true
+          key.column_net: P9
+        middle:
+          rows:
+            panel: # For which row name to use
+              skip: true
+          key.column_net: P8
+        right:
+          key.column_net: P7
+      rows:
+        bottom:
+          row_net: P1 #
+        middle:
+          row_net: P0 #
+        panel:
+          row_net: P4 #s
+      # Fix placement on KiCAD sheet.
+      anchor:
+        shift: [100, -100]
+    rotary:
+      key:
+        padding: 1ky
+        spread: 1ky
+      anchor:
+        ref: matrix_left_panel # Referencing the matrix zone, left column in the panel row
+      columns:
+        first:
+          key.column_net: P9
+        second:
+          key.column_net: P8
+      rows:
+        cluster:
+          row_net: P4 #
+outlines:
+  raw: # User named outline ( you can name it whatever you want)
+    - what: rectangle # Attribute that tells the engine that we are dealing with four sided shapes
+      #Anywhere that these rectangles overlap or have touch edges will be combined into the same shape.
+      where: true # Tells the engine to set this outline up anywhere we have points (keys)
+      size: [px, py] # Tells the engine that we want these rectangles to have a standard mx height and width.
+  keys:
+    - what: rectangle
+      where: true
+      size: [kx - 0.5, ky - 0.5]
+  board:
+    - what: polygon
+      operation: stack
+      points:
+        - ref: rotary_first_cluster
+          shift: [-0.5px, 30]
+        - ref: rotary_second_cluster
+          shift: [0, 30]
+        - ref: matrix_right_panel
+          shift: [0.5px, 30]
+        - ref: matrix_right_middle
+          shift: [0.5px, 0]
+        - ref: matrix_right_bottom
+          shift: [0.5px, -0.5py]
+        - ref: matrix_middle_bottom
+          shift: [0, -0.5py]
+        - ref: matrix_left_bottom
+          shift: [-0.5px, -0.5py]
+        - ref: matrix_left_middle
+          shift: [-0.5px, 0]
+        - ref: rotary_first_cluster
+          shift: [-0.5px, 0.5py]
+      fillet: 2
+  combo:
+    - name: board
+    - operation: subtract
+      name: keys
+pcbs:
+  core: # User named pcb ( you can name it whatever you want)
+    outlines: # section to specify which outlines we'd like to use for this board.
+      main: # User named outline ( you can name it whatever you want) *main is a common name
+        outline: board
+    footprints: #  The footprints: section is naturally where we're going to add our part footprint definitions.
+      choc_hotswap: # User named footprint ( you can name it whatever you want)
+        what: choc # Tells the engine what kind of footprint we're using
+        where: true
+        params:
+          keycaps: true # Tells the engine to add keycaps outlines to the footprint
+          reverse: false # Tells the engine to reverse the footprint
+          hotswap: true # Tells the engine to add hotswap sockets to the footprint
+          from: "{{column_net}}" # Tells the engine to use the column net as the starting point for the footprint
+          to: "{{colrow}}" # Tells the engine to use the colrow as the end point for the footprint
+      diode: # User named footprint ( you can name it whatever you want)
+        what: diode # This footprint supports both surface mount smd diodes as well as through hole diodes
+        where: true # The where: true attribute places this diode footprint at the center of every point on our keyboard.
+        params:
+          from: "{{colrow}}"
+          to: "{{row_net}}" # Tells the engine to use the default end point for the footprint
+        adjust:
+          shift: [0, -5] # Tells the engine to shift the footprint by 0 in the x direction and -5 in the y direction
+      promicro: # User named footprint ( you can name it whatever you want)
+        what: promicro # Tells the engine what kind of footprint we're using
+        where:
+          ref: matrix_right_panel # Tells the engine to use the rotary_first_cluster as the reference point for the footprint
+          shift: [-6.3, 18]
+          rotate: -180
+        params:
+          orientation: down
+      oled:
+        what: oled # This footprint has an awkward shift: [-6, -19] on it. For whatever reason, the anchor point for the footprint itself isn't centered on the screen's pins.
+        where:
+          ref: rotary_first_cluster
+          shift: [-0.5ky, 23.86]
+          rotate: 0
+        params:
+          side: "F" # specifies that we're dealing with the front of the OLED screen
+          SDA: P2 # Tells the engine that the SDA pin is connected to the P2 net *Note: Change it to P01
+          SCL: P3 # Tells the engine that the SCL pin is connected to the P3 net *Note: Change it to P00
+      reset:
+        what: button # reset button for the microcontroller. This allows you to reset the Arduino Pro Micro and put it into a flashing state for applying new firmware.
+        params:
+          from: GND
+          to: RST
+        where:
+          ref: rotary_first_cluster
+          shift: [7, 17.5]
+          rotate: 0
