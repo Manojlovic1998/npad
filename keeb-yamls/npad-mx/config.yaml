@@ -1,16 +1,16 @@
 units:
   # Proxy Spacing Variables
-  kx: u
-  ky: u
+  kx: U
+  ky: U
   # Padding Variables
-  px: kx + 4
-  py: ky + 4
+  px: kx + 1
+  py: ky + 1
 points:
   zones:
     matrix:
       key: # Global key definition to our matrix zone
-        padding: 1ky # defines the vertical space between each key
-        spread: 1ky #  defines the horizontal space between each key.
+        padding: px # defines the vertical space between each key
+        spread: py #  defines the horizontal space between each key.
       columns:
         left:
           rows:
@@ -36,8 +36,8 @@ points:
         shift: [100, -100]
     rotary:
       key:
-        padding: 1ky
-        spread: 1ky
+        padding: px
+        spread: py
       anchor:
         ref: matrix_left_panel # Referencing the matrix zone, left column in the panel row
       columns:
@@ -53,7 +53,7 @@ outlines:
     - what: rectangle # Attribute that tells the engine that we are dealing with four sided shapes
       #Anywhere that these rectangles overlap or have touch edges will be combined into the same shape.
       where: true # Tells the engine to set this outline up anywhere we have points (keys)
-      size: [px, py] # Tells the engine that we want these rectangles to have a standard mx height and width.
+      size: [px - 0.5, py - 0.5] # Tells the engine that we want these rectangles to have a standard mx height and width.
   keys:
     - what: rectangle
       where: true
@@ -63,23 +63,23 @@ outlines:
       operation: stack
       points:
         - ref: rotary_first_cluster
-          shift: [-0.5px, 30]
+          shift: [-0.6px, 30]
         - ref: rotary_second_cluster
           shift: [0, 30]
         - ref: matrix_right_panel
-          shift: [0.5px, 30]
+          shift: [0.6px, 30]
         - ref: matrix_right_middle
-          shift: [0.5px, 0]
+          shift: [0.6px, 0]
         - ref: matrix_right_bottom
-          shift: [0.5px, -0.5py]
+          shift: [0.6px, -0.6py]
         - ref: matrix_middle_bottom
-          shift: [0, -0.5py]
+          shift: [0, -0.6py]
         - ref: matrix_left_bottom
-          shift: [-0.5px, -0.5py]
+          shift: [-0.6px, -0.6py]
         - ref: matrix_left_middle
-          shift: [-0.5px, 0]
+          shift: [-0.6px, 0]
         - ref: rotary_first_cluster
-          shift: [-0.5px, 0.5py]
+          shift: [-0.6px, 0.6py]
       fillet: 2
   combo:
     - name: board
@@ -92,7 +92,7 @@ pcbs:
         outline: board
     footprints: #  The footprints: section is naturally where we're going to add our part footprint definitions.
       choc_hotswap: # User named footprint ( you can name it whatever you want)
-        what: choc # Tells the engine what kind of footprint we're using
+        what: mx # Tells the engine what kind of footprint we're using
         where: true
         params:
           keycaps: true # Tells the engine to add keycaps outlines to the footprint
@@ -112,10 +112,8 @@ pcbs:
         what: promicro # Tells the engine what kind of footprint we're using
         where:
           ref: matrix_right_panel # Tells the engine to use the rotary_first_cluster as the reference point for the footprint
-          shift: [-6.3, 18]
+          shift: [-7.8, 19]
           rotate: -180
-        params:
-          orientation: down
       oled:
         what: oled # This footprint has an awkward shift: [-6, -19] on it. For whatever reason, the anchor point for the footprint itself isn't centered on the screen's pins.
         where:
@@ -135,3 +133,28 @@ pcbs:
           ref: rotary_first_cluster
           shift: [7, 17.5]
           rotate: 0
+      holeTopLeft: # Top holes
+        what: mountinghole
+        where:
+          ref: rotary_first_cluster
+          shift: [-3, 25.4]
+      holeCenterLeft: # Center holes
+        what: mountinghole
+        where:
+          ref: rotary_second_cluster
+          shift: [-10, -10]
+      holeCenterRight:
+        what: mountinghole
+        where:
+          ref: rotary_second_cluster
+          shift: [10, -10]
+      holeBottomLeft: # Bottom holes
+        what: mountinghole
+        where:
+          ref: matrix_left_middle
+          shift: [10, -10]
+      holeBottomRight:
+        what: mountinghole
+        where:
+          ref: matrix_middle_middle
+          shift: [10, -10]
