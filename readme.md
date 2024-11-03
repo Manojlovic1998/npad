@@ -17,3 +17,15 @@ The original Ergogen repository can be found [here](https://ergogen.xyz/)
 - Build a pipeline for synchronizing the Ergogen engine from the main project with the web interface.
 - Build a pipeline for updating the Ergogen interface with the latest changes from this project.
 - Make it servable locally, on github pages, or through docker images.
+
+## How to run the project
+
+1. Clone the repository
+2. Run `git submodule update --init --recursive` to clone the Ergogen engine
+3. Run `bash util-script.sh` to build the docker image and run the container
+
+## How to build output files
+
+1. `cd` into the Ergogen engine directory
+2. Run `npm exec -- ergogen ../keeb-yamls/npad-mx/.` to build the output files
+3. The output files will be in the `output` directory of the Ergogen engine
