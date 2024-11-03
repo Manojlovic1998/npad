@@ -5,6 +5,13 @@ units:
   # Padding Variables
   px: kx + 1
   py: ky + 1
+
+  # Double Padding Variables
+  dpx: kx + 2 # Used for outline of the board that is few mm larger than the actual pcb
+  dpy: ky + 2
+  # M2 Screw Inserts
+  screwSize: 1
+  standoffSize: 2.5
 points:
   zones:
     matrix:
@@ -81,10 +88,29 @@ outlines:
         - ref: rotary_first_cluster
           shift: [-0.6px, 0.6py]
       fillet: 2
-  combo:
-    - name: board
-    - operation: subtract
-      name: keys
+  xlBoard:
+    - what: polygon
+      operation: stack
+      points:
+        - ref: rotary_first_cluster
+          shift: [-0.6dpx, 30 + 2]
+        - ref: rotary_second_cluster
+          shift: [2, 30 + 2]
+        - ref: matrix_right_panel
+          shift: [0.6dpx, 30 + 2]
+        - ref: matrix_right_middle
+          shift: [0.6dpx, 2]
+        - ref: matrix_right_bottom
+          shift: [0.6dpx, -0.6dpy]
+        - ref: matrix_middle_bottom
+          shift: [2, -0.6dpy]
+        - ref: matrix_left_bottom
+          shift: [-0.6dpx, -0.6dpy]
+        - ref: matrix_left_middle
+          shift: [-0.6dpx, 2]
+        - ref: rotary_first_cluster
+          shift: [-0.6dpx, 0.6dpy]
+      fillet: 2
 pcbs:
   core: # User named pcb ( you can name it whatever you want)
     outlines: # section to specify which outlines we'd like to use for this board.
@@ -158,3 +184,30 @@ pcbs:
         where:
           ref: matrix_middle_middle
           shift: [10, -10]
+cases: # Similar to outlines section, instead of creating flat .dxf files, it creates 3D files with depth
+  bottom: # the bottom entry is a name we gave to this particular 3D model
+    - name: board # refers to the outline we defined earlier
+      extrude: 1 # tells the engine to create a 3D model that is 1mmm tall.
+  xlBottom:
+    - name: xlBoard
+      extrude: 1
+  _outerWall:
+    - name: xlBoard
+      extrude: 4
+  _innerWall:
+    - name: board
+      extrude: 4
+  wall:
+    - what: case
+      name: _outerWall
+      operation: add
+    - what: case
+      name: _innerWall
+      operation: subtract
+  case:
+    - what: case
+      name: xlBottom
+      operation: add
+    - what: case
+      name: wall
+      operation: add
