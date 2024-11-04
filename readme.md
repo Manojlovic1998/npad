@@ -29,3 +29,11 @@ The original Ergogen repository can be found [here](https://ergogen.xyz/)
 1. `cd` into the Ergogen engine directory
 2. Run `npm exec -- ergogen ../keeb-yamls/npad-mx/.` to build the output files
 3. The output files will be in the `output` directory of the Ergogen engine
+
+4. To build the output files with case files in stla format, run the following command
+
+```bash
+npm exec -- ergogen ../keeb-yamls/npad-mx/. && for i in output/cases/*.jscad; do npm exec -- @jscad/cli@1 "$i" -of stla; done
+```
+
+I run everything with npm exec because I do not want any global dependencies on my system. 😄
