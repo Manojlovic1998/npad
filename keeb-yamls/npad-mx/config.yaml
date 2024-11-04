@@ -111,6 +111,58 @@ outlines:
         - ref: rotary_first_cluster
           shift: [-0.6dpx, 0.6dpy]
       fillet: 2
+  mounting:
+    - what: circle
+      radius: screwSize
+      where:
+        ref: rotary_first_cluster
+        shift: [-3, 25.4]
+    - what: circle
+      radius: screwSize
+      where:
+        ref: rotary_second_cluster
+        shift: [-10, -10]
+    - what: circle
+      radius: screwSize
+      where:
+        ref: rotary_second_cluster
+        shift: [10, -10]
+    - what: circle
+      radius: screwSize
+      where:
+        ref: matrix_left_middle
+        shift: [10, -10]
+    - what: circle
+      radius: screwSize
+      where:
+        ref: matrix_middle_middle
+        shift: [10, -10]
+  standoff:
+    - what: circle
+      radius: standoffSize
+      where:
+        ref: rotary_first_cluster
+        shift: [-3, 25.4]
+    - what: circle
+      radius: standoffSize
+      where:
+        ref: rotary_second_cluster
+        shift: [-10, -10]
+    - what: circle
+      radius: standoffSize
+      where:
+        ref: rotary_second_cluster
+        shift: [10, -10]
+    - what: circle
+      radius: standoffSize
+      where:
+        ref: matrix_left_middle
+        shift: [10, -10]
+    - what: circle
+      radius: standoffSize
+      where:
+        ref: matrix_middle_middle
+        shift: [10, -10]
 pcbs:
   core: # User named pcb ( you can name it whatever you want)
     outlines: # section to specify which outlines we'd like to use for this board.
@@ -193,10 +245,10 @@ cases: # Similar to outlines section, instead of creating flat .dxf files, it cr
       extrude: 1
   _outerWall:
     - name: xlBoard
-      extrude: 4
+      extrude: 5.6
   _innerWall:
     - name: board
-      extrude: 4
+      extrude: 5.6
   wall:
     - what: case
       name: _outerWall
@@ -204,7 +256,19 @@ cases: # Similar to outlines section, instead of creating flat .dxf files, it cr
     - what: case
       name: _innerWall
       operation: subtract
+  _holes:
+    - name: mounting
+      extrude: 4
+  _standoffs:
+    - name: standoff
+      extrude: 4
   case:
+    - what: case
+      name: _standoffs
+      operation: add
+    - what: case
+      name: _holes
+      operation: subtract
     - what: case
       name: xlBottom
       operation: add
